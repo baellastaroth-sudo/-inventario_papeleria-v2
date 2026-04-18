@@ -1,5 +1,6 @@
-// script.js
+// script.js - VERSIÓN CORREGIDA
 
+// ---------- DATOS GLOBALES ----------
 // Almacenamos los productos registrados en memoria
 let inventario = [];
 
@@ -23,7 +24,7 @@ function showForm(formId) {
     }
 }
 
-// Función para volver al menú inicial (la agregaremos a los formularios dinámicamente)
+// Función para volver al menú inicial
 function volverInicio() {
     document.querySelectorAll('.formulario').forEach(form => {
         form.style.display = 'none';
@@ -125,14 +126,14 @@ function limpiarFormularioRegistro() {
 }
 
 // ---------- FORMULARIO DE VENTAS ----------
-// IDs corregidos para no chocar con registro (en tu HTML están duplicados, los adaptamos aquí)
-const productoInput = document.querySelector('#venta input[placeholder="Ej: Cuaderno"]'); // el input de nombre
-const descuentoInput = document.querySelector('#venta input[placeholder="0.00"][step="0.01"]:nth-of-type(1)');
-const ivaInput = document.querySelector('#venta input[placeholder="0.00"][step="0.01"]:nth-of-type(2)');
+// CORRECCIÓN: Usar los IDs correctos del HTML
+const productoInput = document.getElementById('productoVenta');
+const descuentoInput = document.getElementById('descuentoVenta');
+const ivaInput = document.getElementById('ivaPorcentaje');
 
-const btnAgregarVenta = document.querySelector('#venta .botones-accion #btnAgregar');
-const btnLimpiarVenta = document.querySelector('#venta .botones-accion #btnLimpiar');
-const cuerpoTablaVenta = document.querySelector('#venta #cuerpoTabla');
+const btnAgregarVenta = document.getElementById('btnAgregarVenta');
+const btnLimpiarVenta = document.getElementById('btnLimpiarVenta');
+const cuerpoTablaVenta = document.getElementById('cuerpoTablaVenta');
 
 // Lista de ventas temporales (carrito de venta actual)
 let carritoVenta = [];
@@ -182,7 +183,8 @@ function renderizarTablaVentas() {
 
 function agregarItemVenta() {
     if (!productoInput || !descuentoInput || !ivaInput) {
-        alert('Error: No se encontraron los campos del formulario de ventas.');
+        console.error('Error: No se encontraron los campos del formulario de ventas.');
+        alert('Error: No se encontraron los campos del formulario.');
         return;
     }
     
@@ -191,7 +193,7 @@ function agregarItemVenta() {
     const ivaPorcentaje = parseFloat(ivaInput.value) || 0;
     
     if (!nombreProducto) {
-        alert('Ingresa el nombre del producto.');
+        alert('❌ Ingresa el nombre del producto.');
         return;
     }
     
@@ -235,6 +237,8 @@ function agregarItemVenta() {
     
     // Actualizar datalist por si cambió inventario
     actualizarDatalistVentas();
+    
+    alert(`✅ Venta registrada: ${nombreProducto} - Subtotal: $${subtotalFinal.toFixed(2)}`);
 }
 
 function limpiarFormularioVenta() {
@@ -245,6 +249,7 @@ function limpiarFormularioVenta() {
 
 // ---------- INICIALIZACIÓN Y EVENTOS ----------
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Inicializando aplicación...');
     cargarInventario();
     
     // Añadir botón "Volver" a ambos formularios dinámicamente
@@ -268,20 +273,38 @@ document.addEventListener('DOMContentLoaded', function() {
     // Eventos Registro
     if (btnAgregarRegistro) {
         btnAgregarRegistro.addEventListener('click', agregarProductoRegistro);
+        console.log('✅ Evento de agregar registro configurado');
+    } else {
+        console.error('❌ No se encontró el botón btnAgregar');
     }
+    
     if (btnLimpiarRegistro) {
         btnLimpiarRegistro.addEventListener('click', limpiarFormularioRegistro);
+        console.log('✅ Evento de limpiar registro configurado');
     }
     
-    // Eventos Ventas
+    // Eventos Ventas - CORREGIDOS
     if (btnAgregarVenta) {
         btnAgregarVenta.addEventListener('click', agregarItemVenta);
-    }
-    if (btnLimpiarVenta) {
-        btnLimpiarVenta.addEventListener('click', limpiarFormularioVenta);
+        console.log('✅ Evento de agregar venta configurado');
+    } else {
+        console.error('❌ No se encontró el botón btnAgregarVenta');
     }
     
-    // También permitir Enter en campos de venta? (opcional)
+    if (btnLimpiarVenta) {
+        btnLimpiarVenta.addEventListener('click', limpiarFormularioVenta);
+        console.log('✅ Evento de limpiar venta configurado');
+    } else {
+        console.error('❌ No se encontró el botón btnLimpiarVenta');
+    }
+    
+    console.log('IDs de elementos de venta:', {
+        productoInput: productoInput ? '✓' : '✗',
+        descuentoInput: descuentoInput ? '✓' : '✗',
+        ivaInput: ivaInput ? '✓' : '✗',
+        btnAgregarVenta: btnAgregarVenta ? '✓' : '✗',
+        btnLimpiarVenta: btnLimpiarVenta ? '✓' : '✗'
+    });
 });
 
 // Exponer showForm globalmente para los onclick del HTML
